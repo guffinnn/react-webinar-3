@@ -5,7 +5,12 @@ class Store {
   constructor(initState = {}) {
     this.state = initState;
     this.listeners = []; // Слушатели изменений состояния
-    this.lastCode = null; // Переменная для хранения последнего сгенерированного кода записи
+    this.lastCode = 7; // Переменная для хранения последнего сгенерированного кода записи
+    this.selectionCount = {}; // Счетчик выделений
+
+    this.state.list.forEach(item => {
+      this.selectionCount[item.code] = 0; // Инициализация каждого пункта 0
+    })
   }
 
   /**
@@ -86,13 +91,19 @@ class Store {
       list: this.state.list.map(item => {
         if (item.code === code) {
           item.selected = !item.selected;
+
+          // Увеличение счетчика
+          if(item.selected) {
+            this.selectionCount = this.selectionCount || {};
+            this.selectionCount[code] = (this.selectionCount[code] || 0) + 1;
+          }
         } else {
-          item.selected = false; // сброс выделения
+          item.selected = false; // Сброс выделения
         }
         return item;
       })
     })
-  }
+  };
 }
 
 export default Store;
